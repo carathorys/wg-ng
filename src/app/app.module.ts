@@ -13,7 +13,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 @NgModule({
   declarations: [AppComponent],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'serverApp' }),
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
