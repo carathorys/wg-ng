@@ -9,7 +9,24 @@ import { AuthenticatedLayoutComponent, DashboardComponent } from './components';
         path: '',
         component: DashboardComponent,
       },
-      
+      {
+        path: ':id',
+        children: [
+          {
+            path: 'clients',
+            children: [
+              {
+                path: ':client-id',
+                component: DashboardComponent,
+                data: {
+                  id: ':id',
+                  clientId: ':client-id',
+                },
+              },
+            ],
+          },
+        ],
+      },
     ]),
   ],
   exports: [RouterModule],
