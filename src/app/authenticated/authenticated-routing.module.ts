@@ -1,31 +1,17 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { AuthenticatedLayoutComponent, DashboardComponent } from './components';
+import { LayoutComponent } from './layout';
 
 @NgModule({
   imports: [
     RouterModule.forChild([
       {
         path: '',
-        component: DashboardComponent,
-      },
-      {
-        path: ':id',
-        children: [
-          {
-            path: 'clients',
-            children: [
-              {
-                path: ':client-id',
-                component: DashboardComponent,
-                data: {
-                  id: ':id',
-                  clientId: ':client-id',
-                },
-              },
-            ],
-          },
-        ],
+        component: LayoutComponent,
+        loadChildren: () =>
+          import('./authenticated-routes/authenticated-routes.module').then(
+            (m) => m.AuthenticatedRoutesModule,
+          ),
       },
     ]),
   ],
