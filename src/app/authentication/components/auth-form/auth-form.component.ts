@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { ErrorStateMatcher } from '@angular/material';
 import { FormGroupDirective, NgForm, FormControl, Validators, FormGroup } from '@angular/forms';
 import { CloseScrollStrategy } from '@angular/cdk/overlay';
+import { AuthService } from 'src/app/common-services';
+import { Router } from '@angular/router';
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -22,6 +24,13 @@ export class AuthFormComponent {
     password: new FormControl('', [Validators.required]),
   });
 
+  /**
+   *
+   */
+  constructor(private readonly authService: AuthService, private readonly router: Router) {
+    console.log(this.router.routerState);
+  }
+
   get password() {
     return this.loginForm.get('password');
   }
@@ -29,9 +38,15 @@ export class AuthFormComponent {
     return this.loginForm.get('email');
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.loginForm.valid === true) {
-      console.log(this.loginForm);
+      const success = await this.authService.doLogin(
+        this.loginForm.get('email').value,
+        this.loginForm.get('password').value,
+      );
+      if (success === true) {
+        await this.router.navigate(['/u']);
+      }
     }
   }
 }

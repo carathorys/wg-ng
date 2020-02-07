@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 import { filter, first } from 'rxjs/operators';
 
-import { Router, RouterStateSnapshot } from '@angular/router';
+import { Router, RouterStateSnapshot, UrlSegment } from '@angular/router';
 import { Configuration, User } from '../../models';
 import { ConfigurationService } from '../configuration';
 
@@ -21,6 +21,8 @@ export class AuthService {
   public get User(): Observable<User> {
     return this.user.asObservable();
   }
+
+  private readonly STORAGE_KEY = 'user';
 
   private readonly loggedOut = new EventEmitter<void>(false);
   private readonly loggedIn = new EventEmitter<void>(false);
@@ -125,17 +127,17 @@ export class AuthService {
    * logIn
    * @description The user login should be initiated with this method only
    */
-  public async logIn(additionalState?: RouterStateSnapshot): Promise<void> {
+  public async initiateLoginSequence(additionalState?: UrlSegment[]): Promise<void> {
+    console.log('LogIn request: ', additionalState);
     return new Promise<void>((resolve, reject) => {
       this.isInitialized
         .pipe(filter((x) => x === true))
         .pipe(first())
         .subscribe(async () => {
           if (!(await this.IsLoggedIn())) {
-            console.log('Here we can navigate to authentication page');
-            await this.router.navigate(['/authentication']);
+            await this.router.navigate(['/auth']);
             // this.oauthService.initImplicitFlow(!!additionalState ? additionalState.url : '');
-            // resolve();
+            resolve();
 
             return;
           }
@@ -144,6 +146,14 @@ export class AuthService {
     });
   }
 
+  public async doLogin(username: string, pwd: string): Promise<boolean> {
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify({ username }));
+
+    if ((await this.IsLoggedIn()) === true) {
+      return true;
+    }
+    return false;
+  }
   /**
    * @description this method will configure the OAuth service using the environment variables,
    * then it will try to log in the user
@@ -178,8 +188,9 @@ export class AuthService {
     //     ...this.oauthService.getIdentityClaims(),
     //     scope: this.parseAccessToken().scope
     //   };
-
-    //   this._isLoggedIn.next(true);
+    if (!!localStorage.getItem(this.STORAGE_KEY)) {
+      this.isLoggedIn.next(true);
+    }
     //   const requestedScopes = this._configuration.oauthSettings.scope.split(' ');
 
     //   if (!userProf.scope) {

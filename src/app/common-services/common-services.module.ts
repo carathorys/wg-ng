@@ -4,17 +4,16 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   MatCardModule,
-  MatProgressSpinnerModule,
   MatSelectModule,
   MatSnackBarModule,
+  MatProgressBarModule,
 } from '@angular/material';
 
-
-import { LoadingComponent, NoContentComponent } from './components';
+import { LoadingComponent, NoContentComponent, WelcomeComponent } from './components';
 import { AuthGuardService } from './services';
 
 @NgModule({
-  declarations: [LoadingComponent, NoContentComponent],
+  declarations: [LoadingComponent, NoContentComponent, WelcomeComponent],
   providers: [AuthGuardService],
   imports: [
     CommonModule,
@@ -22,12 +21,9 @@ import { AuthGuardService } from './services';
     FormsModule,
     MatSnackBarModule,
     MatSelectModule,
-    MatProgressSpinnerModule,
+    MatProgressBarModule,
     MatCardModule,
   ],
-  exports: [
-    LoadingComponent,
-    NoContentComponent
-  ],
+  exports: [LoadingComponent, NoContentComponent, WelcomeComponent],
 })
 export class CommonServicesModule {}

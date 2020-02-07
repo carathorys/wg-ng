@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { AuthGuardService , NoContentComponent } from './common-services';
-
+import { AuthGuardService, NoContentComponent, WelcomeComponent } from './common-services';
 
 @NgModule({
   imports: [
@@ -10,24 +9,29 @@ import { AuthGuardService , NoContentComponent } from './common-services';
         {
           path: '',
           pathMatch: 'full',
-          canActivate: [AuthGuardService],
+          component: WelcomeComponent,
+        },
+        {
+          path: 'u',
+          pathMatch: 'prefix',
+          canLoad: [AuthGuardService],
           loadChildren: './authenticated/authenticated.module#AuthenticatedModule',
         },
         {
-          path: 'authentication',
+          path: 'auth',
           pathMatch: 'prefix',
-          loadChildren: './authentication/authentication.module#AuthenticationModule'
+          loadChildren: './authentication/authentication.module#AuthenticationModule',
         },
         {
           path: 'unauthorized',
           pathMatch: 'prefix',
-          loadChildren: './unauthorized/unauthorized.module#UnauthorizedModule'
+          loadChildren: './unauthorized/unauthorized.module#UnauthorizedModule',
         },
         {
           path: 'not-found',
-          component: NoContentComponent
+          component: NoContentComponent,
         },
-        { path: '**', redirectTo: 'not-found' }
+        { path: '**', component: NoContentComponent },
       ],
       {
         initialNavigation: true,
