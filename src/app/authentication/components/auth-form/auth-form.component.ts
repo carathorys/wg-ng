@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ErrorStateMatcher } from '@angular/material';
 import { FormGroupDirective, NgForm, FormControl, Validators, FormGroup } from '@angular/forms';
+import { CloseScrollStrategy } from '@angular/cdk/overlay';
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -15,6 +16,7 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   styleUrls: ['./auth-form.component.scss'],
 })
 export class AuthFormComponent {
+  matcher = new MyErrorStateMatcher();
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required]),
@@ -27,5 +29,9 @@ export class AuthFormComponent {
     return this.loginForm.get('email');
   }
 
-  matcher = new MyErrorStateMatcher();
+  onSubmit() {
+    if (this.loginForm.valid === true) {
+      console.log(this.loginForm);
+    }
+  }
 }
