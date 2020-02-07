@@ -135,7 +135,9 @@ export class AuthService {
         .pipe(first())
         .subscribe(async () => {
           if (!(await this.IsLoggedIn())) {
-            await this.router.navigate(['/auth']);
+            await this.router.navigate(['/auth'], {
+              state: [...additionalState.join('/')],
+            });
             // this.oauthService.initImplicitFlow(!!additionalState ? additionalState.url : '');
             resolve();
 

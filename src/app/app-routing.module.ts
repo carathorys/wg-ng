@@ -15,17 +15,17 @@ import { AuthGuardService, NoContentComponent, WelcomeComponent } from './common
           path: 'u',
           pathMatch: 'prefix',
           canLoad: [AuthGuardService],
-          loadChildren: './authenticated/authenticated.module#AuthenticatedModule',
+          loadChildren: () => import('./authenticated/authenticated.module').then(m => m.AuthenticatedModule),
         },
         {
           path: 'auth',
           pathMatch: 'prefix',
-          loadChildren: './authentication/authentication.module#AuthenticationModule',
+          loadChildren: () => import('./authentication/authentication.module').then(m => m.AuthenticationModule),
         },
         {
           path: 'unauthorized',
           pathMatch: 'prefix',
-          loadChildren: './unauthorized/unauthorized.module#UnauthorizedModule',
+          loadChildren: () => import('./unauthorized/unauthorized.module').then(m => m.UnauthorizedModule),
         },
         {
           path: 'not-found',

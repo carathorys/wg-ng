@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ErrorStateMatcher } from '@angular/material';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { FormGroupDirective, NgForm, FormControl, Validators, FormGroup } from '@angular/forms';
 import { CloseScrollStrategy } from '@angular/cdk/overlay';
 import { AuthService } from 'src/app/common-services';

@@ -3,7 +3,7 @@ import { combineLatest, debounce } from 'rxjs/operators';
 
 import { HttpClient } from '@angular/common/http';
 import { EventEmitter } from '@angular/core';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { ConfigurationService } from '../configuration';
 
