@@ -7,9 +7,12 @@ import { AuthFormComponent } from './components';
     RouterModule.forChild([
       {
         path: '',
-        component: AuthFormComponent
+        component: AuthFormComponent,
       },
-      { path: '**', redirectTo: '' },
+      {
+        path: '**',
+        redirectTo: '',
+      },
     ]),
   ],
   exports: [RouterModule],

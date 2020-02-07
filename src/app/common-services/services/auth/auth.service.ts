@@ -128,7 +128,6 @@ export class AuthService {
    * @description The user login should be initiated with this method only
    */
   public async initiateLoginSequence(additionalState?: UrlSegment[]): Promise<void> {
-    console.log('LogIn request: ', additionalState);
     return new Promise<void>((resolve, reject) => {
       this.isInitialized
         .pipe(filter((x) => x === true))
@@ -136,7 +135,7 @@ export class AuthService {
         .subscribe(async () => {
           if (!(await this.IsLoggedIn())) {
             await this.router.navigate(['/auth'], {
-              state: [...additionalState.join('/')],
+              state: { additionalState },
             });
             // this.oauthService.initImplicitFlow(!!additionalState ? additionalState.url : '');
             resolve();

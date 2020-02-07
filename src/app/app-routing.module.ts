@@ -14,18 +14,23 @@ import { AuthGuardService, NoContentComponent, WelcomeComponent } from './common
         {
           path: 'u',
           pathMatch: 'prefix',
-          canLoad: [AuthGuardService],
-          loadChildren: () => import('./authenticated/authenticated.module').then(m => m.AuthenticatedModule),
+          canActivate: [AuthGuardService],
+          canActivateChild: [AuthGuardService],
+          // canLoad: [AuthGuardService],
+          loadChildren: () =>
+            import('./authenticated/authenticated.module').then((m) => m.AuthenticatedModule),
         },
         {
           path: 'auth',
           pathMatch: 'prefix',
-          loadChildren: () => import('./authentication/authentication.module').then(m => m.AuthenticationModule),
+          loadChildren: () =>
+            import('./authentication/authentication.module').then((m) => m.AuthenticationModule),
         },
         {
           path: 'unauthorized',
           pathMatch: 'prefix',
-          loadChildren: () => import('./unauthorized/unauthorized.module').then(m => m.UnauthorizedModule),
+          loadChildren: () =>
+            import('./unauthorized/unauthorized.module').then((m) => m.UnauthorizedModule),
         },
         {
           path: 'not-found',
@@ -34,8 +39,7 @@ import { AuthGuardService, NoContentComponent, WelcomeComponent } from './common
         { path: '**', component: NoContentComponent },
       ],
       {
-        initialNavigation: true,
-        useHash: false,
+        // enableTracing: true
       },
     ),
   ],

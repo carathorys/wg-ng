@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DashboardComponent } from './components';
-import { AuthenticatedRoutingModule } from './authenticated-routiung.module';
+import { DashboardComponent, AuthenticatedLayoutComponent } from './components';
+import { AuthenticatedRoutingModule } from './authenticated-routing.module';
 
 @NgModule({
-  declarations: [DashboardComponent],
+  declarations: [DashboardComponent, AuthenticatedLayoutComponent],
   imports: [CommonModule, AuthenticatedRoutingModule],
   exports: [AuthenticatedRoutingModule],
+  entryComponents: [AuthenticatedLayoutComponent],
 })
 export class AuthenticatedModule {}

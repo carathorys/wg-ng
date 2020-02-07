@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { DashboardComponent } from './components';
+import { AuthenticatedLayoutComponent, DashboardComponent } from './components';
 
 @NgModule({
   imports: [
@@ -9,7 +9,7 @@ import { DashboardComponent } from './components';
         path: '',
         component: DashboardComponent,
       },
-      { path: '**', redirectTo: '' },
+      
     ]),
   ],
   exports: [RouterModule],
