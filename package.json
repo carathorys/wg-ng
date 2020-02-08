@@ -29,9 +29,7 @@
     "@angular/platform-browser-dynamic": "~9.0.0",
     "@angular/platform-server": "~9.0.0",
     "@angular/router": "~9.0.0",
-    "@nguniversal/express-engine": "^8.2.6",
-    "@nguniversal/module-map-ngfactory-loader": "v8.2.6",
-    "express": "^4.15.2",
+    "@nguniversal/aspnetcore-engine": "^9.0.0",
     "ng-cli-pug-loader": "^0.2.2",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
@@ -42,7 +40,6 @@
     "@angular/cli": "~9.0.1",
     "@angular/compiler-cli": "~9.0.0",
     "@angular/language-service": "~9.0.0",
-    "@types/express": "^4.17.0",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.11.1",
@@ -57,11 +54,11 @@
     "karma-jasmine-html-reporter": "^1.4.0",
     "protractor": "~5.4.0",
     "pug": "^2.0.4",
+    "pug-lint": "^2.6.0",
     "pug-loader": "^2.4.0",
     "ts-loader": "^5.2.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",
-    "typescript": "~3.7.5",
-    "webpack-cli": "^3.1.0"
+    "typescript": "~3.7.5"
   }
 }
