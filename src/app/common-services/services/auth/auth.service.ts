@@ -7,6 +7,8 @@ import { filter, first } from 'rxjs/operators';
 import { Router, RouterStateSnapshot, UrlSegment } from '@angular/router';
 import { Configuration, User } from '../../models';
 import { ConfigurationService } from '../configuration';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 @Injectable({
   providedIn: 'root',
@@ -15,9 +17,11 @@ export class AuthService {
   public get OnLoggedOut(): Observable<void> {
     return this.loggedOut.asObservable();
   }
+
   public get OnLoggedIn(): Observable<void> {
     return this.loggedIn.asObservable();
   }
+
   public get User(): Observable<User> {
     return this.user.asObservable();
   }
@@ -38,7 +42,8 @@ export class AuthService {
 
   constructor(
     configService: ConfigurationService,
-    // private readonly oauthService: OAuthService,
+    private readonly oauthService: OAuthService,
+    private readonly httpClient: HttpClient,
     private readonly router: Router,
   ) {
     configService
@@ -137,7 +142,7 @@ export class AuthService {
             await this.router.navigate(['/auth'], {
               state: { additionalState },
             });
-            // this.oauthService.initImplicitFlow(!!additionalState ? additionalState.url : '');
+
             resolve();
 
             return;
@@ -147,74 +152,80 @@ export class AuthService {
     });
   }
 
-  public async doLogin(username: string, pwd: string): Promise<boolean> {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify({ username }));
-
-    if ((await this.IsLoggedIn()) === true) {
-      return true;
-    }
+  public async doLogin(username: string, pwd: string, remember: boolean = false): Promise<boolean> {
+    const uprof = await this.oauthService.fetchTokenUsingPasswordFlowAndLoadUserProfile(
+      username,
+      pwd,
+    );
+    console.log('Result: ', uprof);
     return false;
   }
+
   /**
    * @description this method will configure the OAuth service using the environment variables,
    * then it will try to log in the user
    */
   private async configureWithNewConfigApi(): Promise<void> {
-    // this.oauthService.configure({
-    //   ...this._configuration.oauthSettings
-    // });
-
-    // await this.oauthService.loadDiscoveryDocument()
-    //   .catch(e => { window.alert(`There is an issue with the widp.\n${e.message}`); });
-
+    this.oauthService.configure({
+      oidc: false,
+      ...this.configuration.oauthSettings,
+    });
+    let loginResult: any;
     try {
-      // loginResult = await this.oauthService.tryLogin({
-      //   onTokenReceived: async info => {
-      //     setTimeout(() => {
-      //       if (!!info && info.state) {
-      //         this.router
-      //           .navigateByUrl(info.state)
-      //           .then()
-      //           .catch();
-      //       }
-      //     }, 1000);
-      //   }
-      // });
+      await this.oauthService.loadDiscoveryDocument();
+      loginResult = await this.oauthService.tryLogin({
+        onTokenReceived: async (info) => {
+          setTimeout(() => {
+            if (!!info && info.state) {
+              this.router
+                .navigateByUrl(info.state)
+                .then()
+                .catch();
+            }
+          }, 1000);
+        },
+      });
     } catch (error) {
-      // tslint:disable-next-line: no-empty
+      console.log('Error when trying to set up authentication: ', error);
     }
 
-    // if (this.oauthService.hasValidAccessToken() && this.oauthService.hasValidIdToken()) {
-    //   const userProf = {
-    //     ...this.oauthService.getIdentityClaims(),
-    //     scope: this.parseAccessToken().scope
-    //   };
-    if (!!localStorage.getItem(this.STORAGE_KEY)) {
-      this.isLoggedIn.next(true);
+    if (this.oauthService.hasValidAccessToken() && this.oauthService.hasValidIdToken()) {
+      const userProf = {
+        ...this.oauthService.getIdentityClaims(),
+        scope: this.parseAccessToken().scope,
+      };
+
+      const requestedScopes = this.configuration.oauthSettings.scope.split(' ');
+
+      if (!userProf.scope) {
+        alert('You are not authorized!');
+      }
+      const grantedScopesFromRequest = userProf.scope.filter(
+        (x: string) => requestedScopes.indexOf(x) > 0,
+      );
+
+      if (!userProf || grantedScopesFromRequest.length < 0) {
+        await this.router.navigateByUrl('unauthorized');
+      }
+
+      this.userProfile.next(userProf);
+      try {
+        await this.oauthService.silentRefresh({}, true);
+        this.oauthService.setupAutomaticSilentRefresh();
+      } catch (error) {
+        alert('Silent refresh is disabled!');
+      }
     }
-    //   const requestedScopes = this._configuration.oauthSettings.scope.split(' ');
-
-    //   if (!userProf.scope) {
-    //     alert('You are not authorized!');
-    //   }
-    //   // tslint:disable-next-line: max-line-length
-    //   const grantedScopesFromRequest = userProf.scope.filter(x => requestedScopes.indexOf(x) > 0);
-
-    //   if (!userProf || grantedScopesFromRequest.length < 0) {
-    //     await this.router.navigateByUrl('unauthorized');
-    //   }
-
-    //   this.userProfile.next(userProf);
-    //   try {
-    //     await this.oauthService.silentRefresh({}, false);
-    //     this.oauthService.setupAutomaticSilentRefresh();
-    //   } catch (error) {
-    //     alert('Silent refresh is disabled!');
-    //   }
-    // }
     setTimeout(() => {
       this.isLoggedIn.next(true);
-      this.userProfile.next({});
+      this.userProfile.next(loginResult);
     }, 5000);
+  }
+
+  private parseAccessToken(): { scope: Array<string> } {
+    const token = this.oauthService.getAccessToken();
+    if (!!token && token.split('.').length === 3) {
+      return JSON.parse(atob(token.split('.')[1]));
+    }
   }
 }

@@ -24,6 +24,7 @@ export class AuthFormComponent implements OnInit {
     password: new FormControl('', [Validators.required]),
   });
   private readonly redirectOnSuccess: UrlSegment[];
+  private readonly requestVerificationToken: string;
 
   constructor(
     private readonly authService: AuthService,
@@ -31,6 +32,7 @@ export class AuthFormComponent implements OnInit {
     private readonly activatedRoute: ActivatedRoute,
   ) {
     this.redirectOnSuccess = this.router.getCurrentNavigation()?.extras?.state?.additionalState;
+    this.requestVerificationToken = this.router.getCurrentNavigation()?.extras?.state?.requestVerificationToken;
   }
 
   ngOnInit(): void {}
@@ -46,7 +48,7 @@ export class AuthFormComponent implements OnInit {
     if (this.loginForm.valid === true) {
       const success = await this.authService.doLogin(
         this.email.value,
-        this.password.value,
+        this.password.value, ''
       );
       if (success === true) {
         await this.router.navigate([`/${this.redirectOnSuccess?.join('/') ?? 'u'}`]);

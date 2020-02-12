@@ -1,7 +1,20 @@
 {
-    "title": "Wireguard NG Dashboard",
-    "version": "0.0.0",
-    "production": false,
-    "environment": "dev",
-    "apiEndpoint": "/api"
+  "title": "Wireguard NG Dashboard",
+  "version": "0.0.0",
+  "production": false,
+  "environment": "dev",
+  "apiEndpoint": "/api",
+  "oauth2ModuleSettings": {
+    "resourceServer": {
+      "allowedUrls": ["https://localhost:5001"],
+      "sendAccessToken": true
+    }
+  },
+  "oauthSettings": {
+    "issuer": "https://localhost:5001",
+    "redirectUri": "https://localhost:5001",
+    "scope": "openid profile Wireguard.DashboardAPI",
+    "clientId": "wg_ng_dashboard",
+    "silentRefreshRedirectUri": "https://localhost:5001/assets/silent-refresh.html"
+  }
 }
